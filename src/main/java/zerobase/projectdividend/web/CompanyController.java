@@ -24,6 +24,7 @@ public class CompanyController {
     private final CacheManager cacheManager;
 
     @GetMapping("/autocomplete")
+    @PreAuthorize("hasRole('READ')")
     public ResponseEntity<?> autoComplete(@RequestParam String keyword) {
         // Trie 이용한 검색
 //        List<String> autocomplete = this.companyService.autocomplete(keyword);

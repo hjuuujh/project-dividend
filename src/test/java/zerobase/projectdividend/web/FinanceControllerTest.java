@@ -2,17 +2,24 @@ package zerobase.projectdividend.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,8 +27,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.event.annotation.BeforeTestExecution;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,6 +43,7 @@ import zerobase.projectdividend.model.ScrapedResult;
 import zerobase.projectdividend.persist.entity.MemberEntity;
 import zerobase.projectdividend.persist.repository.MemberRepository;
 import zerobase.projectdividend.security.JwtAuthenticationFilter;
+import zerobase.projectdividend.security.SecurityConfiguration;
 import zerobase.projectdividend.security.TokenProvider;
 import zerobase.projectdividend.service.FinanceService;
 import zerobase.projectdividend.service.MemberService;
@@ -49,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -56,8 +68,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(FinanceController.class)
-//@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(controllers = FinanceController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class FinanceControllerTest {
 
     @MockBean
@@ -72,51 +84,15 @@ class FinanceControllerTest {
     @MockBean
     private MemberService memberService;
 
-    @MockBean
-    private MemberRepository memberRepository;
-
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    // userDetail에서 유저정보 조회하는 부분이 @BeforeEach보다 먼저 실행되므로
-    // @BeforeTransaction 이용
-    @BeforeTransaction
-    public void accountSetup() {
-        System.out.println("R#@R@R#");
-        Auth.SignUp request = new Auth.SignUp();
-        request.setUsername("user1@gmail.com");
-        request.setPassword("qwerty");
-        request.setRoles(Arrays.asList("ROLE_WRITE", "ROLE_READ"));
-
-        memberService.register(request);
-        memberRepository.save(request.toEntity());
-
-    }
-//
-//    @BeforeEach
-//    void setUp() {
-//        UserDetails user = MemberEntity.builder()
-//                .id(1L)
-//                .username("user1@gmail.com")
-//                .password("qwerty")
-//                .roles(Arrays.asList("ROLE_READ", "ROLE_WRITE"))
-//                .build();
-//
-//        SecurityContext context = SecurityContextHolder.getContext();
-//        context.setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
-//    }
-
-
-
     @Test
-    // Principle / UserDetailsService 객체를 사용한경우 WithMockUser를 사용할 수 없고 WithMockUser를 사용해야함
-    @WithUserDetails(value = "user1@gmail.com", userDetailsServiceBeanName = "memberService")
-//    @WithMockUser
-//    @WithMockCustomUser(username = "user1@gmail.com", authorities = {"USER"})
-    void successSearchFinance()  throws Exception{
+    @WithMockUser(roles = {"READ"})
+    void successSearchFinance() throws Exception{
         //given
         Company company = Company.builder()
                 .name("3M Company")
@@ -133,18 +109,15 @@ class FinanceControllerTest {
         given(financeService.getDividendByCompanyName(anyString()))
                 .willReturn(result);
 
-//        given(filter.doFilter(any(), any(), any()))
-//                .willReturn()
         //when
 
         //then
         mockMvc.perform(get("/finance/dividend/3M Company"))
-//        mockMvc.perform(get("/finance/dividend/3M Company"))
-
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.company").value(company));
-//                .andExpect(jsonPath("$.dividends").value(dividends));
+                .andExpect(jsonPath("$.company").value(company))
+                .andExpect(jsonPath("$.dividends[0].date").value("2023-05-18T00:00:00"))
+                .andExpect(jsonPath("$.dividends[0].dividend").value("1.25"));
 
     }
 

@@ -16,8 +16,8 @@ import zerobase.projectdividend.persist.repository.MemberRepository;
 
 import javax.transaction.Transactional;
 
+@Service
 @Slf4j
-@Service("memberService")
 @AllArgsConstructor
 @Transactional
 public class MemberService implements UserDetailsService {
@@ -55,3 +55,4 @@ public class MemberService implements UserDetailsService {
         return memberEntity;
     }
 }
+
