@@ -1,0 +1,41 @@
+### add company
+POST localhost:8080/company
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJncmFjZSIsInJvbGVzIjpbIlJPTEVfUkVBRCIsIlJPTEVfV1JJVEUiXSwiaWF0IjoxNzIwMjQ0NTk4LCJleHAiOjE3MjAyNDgxOTh9.hvZnyb3A00ecBX1npMbKHqoDVyqUuJx2rV8qf08NflsilFqLDqgCzT9DKq7_YsqJMT0NjAsAcdrcG3QQbazJgw
+
+{
+  "ticker": "O"
+}
+
+### add company
+POST localhost:8080/company
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJncmFjZSIsInJvbGVzIjpbIlJPTEVfUkVBRCIsIlJPTEVfV1JJVEUiXSwiaWF0IjoxNzIwMjQ0NTk4LCJleHAiOjE3MjAyNDgxOTh9.hvZnyb3A00ecBX1npMbKHqoDVyqUuJx2rV8qf08NflsilFqLDqgCzT9DKq7_YsqJMT0NjAsAcdrcG3QQbazJgw
+
+{
+  "ticker": "MMM"
+}
+
+### add company
+POST localhost:8080/company
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJncmFjZSIsInJvbGVzIjpbIlJPTEVfUkVBRCIsIlJPTEVfV1JJVEUiXSwiaWF0IjoxNzIwMjQ0NTk4LCJleHAiOjE3MjAyNDgxOTh9.hvZnyb3A00ecBX1npMbKHqoDVyqUuJx2rV8qf08NflsilFqLDqgCzT9DKq7_YsqJMT0NjAsAcdrcG3QQbazJgw
+
+{
+"ticker": "COKE"
+}
+
+### get company list
+GET localhost:8080/company
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJncmFjZSIsInJvbGVzIjpbIlJPTEVfUkVBRCIsIlJPTEVfV1JJVEUiXSwiaWF0IjoxNzIwMTc1MDUxLCJleHAiOjE3MjAxNzg2NTF9.Xgx-vgfEvqAbrbfjB1pvFAsM7cI-9jHmhCO9zk0PZuPiiM5l0DsOaf4KEIkhcOltQU3D1DlugjxmzEmv8srGaA
+
+### search company by keyword
+GET localhost:8080/company/autocomplete?keyword=R
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJncmFjZSIsInJvbGVzIjpbIlJPTEVfUkVBRCIsIlJPTEVfV1JJVEUiXSwiaWF0IjoxNzIwMjQ0NTk4LCJleHAiOjE3MjAyNDgxOTh9.hvZnyb3A00ecBX1npMbKHqoDVyqUuJx2rV8qf08NflsilFqLDqgCzT9DKq7_YsqJMT0NjAsAcdrcG3QQbazJgw
+
+### delete company by company ticker
+DELETE localhost:8080/company/MMM
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJncmFjZSIsInJvbGVzIjpbIlJPTEVfUkVBRCIsIlJPTEVfV1JJVEUiXSwiaWF0IjoxNzIwMTU5MzY4LCJleHAiOjE3MjAxNjI5Njh9.cKhCRbYegMlanPq46gM-qOUaL6Rs3hDPMtH051k5FOhJ6Ytpuf3eZ1O3JHZK-llqju_YE2pLl3cDrJO9q2RWPA

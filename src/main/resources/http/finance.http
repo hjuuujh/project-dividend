@@ -1,0 +1,4 @@
+### get company and dividend info
+GET localhost:8080/finance/dividend/3M Company
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJncmFjZSIsInJvbGVzIjpbIlJPTEVfUkVBRCIsIlJPTEVfV1JJVEUiXSwiaWF0IjoxNzIwMTU5MzY4LCJleHAiOjE3MjAxNjI5Njh9.cKhCRbYegMlanPq46gM-qOUaL6Rs3hDPMtH051k5FOhJ6Ytpuf3eZ1O3JHZK-llqju_YE2pLl3cDrJO9q2RWPA
